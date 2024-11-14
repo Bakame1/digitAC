@@ -1,7 +1,6 @@
 import cv2
 import matplotlib.pyplot as plt
 from easyocr import easyocr
-import re
 
 def readImage(OriginalImage,ProcessedImage):
     reader = easyocr.Reader(['en'], gpu=True)

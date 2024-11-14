@@ -1,12 +1,10 @@
 import cv2
-import easyocr
 import matplotlib.pyplot as plt
 from readImage import readImage
-
 from crop import cropImage
 
 #Load image
-image = cv2.imread('../../Photos/Aircond/AC (204).jpg')
+image = cv2.imread('../../Photos/Aircond/AC (1).jpg')
 
 #Pre-process the image
 image_cropped= cropImage(image)
@@ -52,10 +50,10 @@ if digit_detected :
             adjusted_bottom_right = (int(bbox[0][0] + first_two_digits_width), int(bbox[2][1]))
 
             #Draw the rectangle with adjusted width to cover only the first two digits
-            cv2.rectangle(image_processed, tuple(map(int, bbox[0])), adjusted_bottom_right, (0, 255, 0), 2)
+            cv2.rectangle(image_cropped, tuple(map(int, bbox[0])), adjusted_bottom_right, (0, 255, 0), 2)
 
             #Display txtCopy within the adjusted bounding box (only the first two digits)
-            cv2.putText(image_processed, txtCopy[:2], tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4)
+            cv2.putText(image_cropped, txtCopy[:2], tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4)
 
 
     else:
@@ -65,14 +63,14 @@ if digit_detected :
             print(txtCopy)
         ###############################Draw bounding boxes############################
         bbox = text_[0][0]  # Get the bounding box of the detected text area
-        cv2.rectangle(image_processed, tuple(map(int, bbox[0])), tuple(map(int, bbox[2])), (0, 255, 0), 5)
-        cv2.putText(image_processed, txtCopy, tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4)
+        cv2.rectangle(image_cropped, tuple(map(int, bbox[0])), tuple(map(int, bbox[2])), (0, 255, 0), 5)
+        cv2.putText(image_cropped, txtCopy, tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4)
 
 
 
 
     #Display the image with detected digits highlighted
-    plt.imshow(cv2.cvtColor(image_processed, cv2.COLOR_BGR2RGB))
+    plt.imshow(cv2.cvtColor(image_cropped, cv2.COLOR_BGR2RGB))
     plt.title("Digits found")
     plt.axis("off")
     plt.show()
