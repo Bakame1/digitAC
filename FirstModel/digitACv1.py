@@ -8,7 +8,7 @@ import re
 
 
 #Load image
-image = cv2.imread('../../Photos/Aircond/AC (1).jpg')
+image = cv2.imread('../../../Photos/Aircond/AC (2).jpg')
 
 #Pre-process the image
 image = imutils.resize(image, height=500)
@@ -61,7 +61,7 @@ if len(txtCopy) == 3:
     #Remove the last digit if it’s a "0" usually it is a the Celsius letter
     if txtCopy[-1]== '0':
         txtCopy=txtCopy[0]+txtCopy[1]  # Remove the last detected "0"
-        print(txtCopy)
+      
 
     ####################Draw bounding boxes#############################
     if len(text_) >= 1:
@@ -95,8 +95,10 @@ if not digit_detected:
 
 #Display the image with detected digits highlighted
 plt.imshow(cv2.cvtColor(image_cropped, cv2.COLOR_BGR2RGB))
+plt.axis("off")
+plt.title("First Model")
 plt.show()
 
 #Display the string value read
-print(text_)
+print(txtCopy)
 

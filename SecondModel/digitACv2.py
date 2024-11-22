@@ -4,7 +4,7 @@ from readImage import readImage
 from crop import cropImage
 
 #Load image
-image = cv2.imread('../../Photos/Aircond/AC (1).jpg')
+image = cv2.imread('../../../Photos/Aircond/AC (1).jpg')
 
 #Pre-process the image
 image_cropped= cropImage(image)
