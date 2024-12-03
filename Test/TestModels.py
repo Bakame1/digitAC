@@ -1,5 +1,6 @@
 import sys
 from Test.model2.model2 import model2_f
+from Test.model3.model3 import model3_f
 
 def print_progress(iteration, total, prefix='', suffix='', decimals=1, length=50, fill='█'):
     """
@@ -57,35 +58,33 @@ def displayPictureNotRead(tabPictureNotRead):
     for i in range (len(tabPictureNotRead)):
         if i%10 == 0:
             res=res+"\n"
-        res=res+"n°"+str(i+1)+" |"
+        res=res+"n°"+str(tabPictureNotRead[i])+" |"
     print(res)
 
 
 import time
 
-
-
 def testModel(model):
-    purcentage="%"
     sumPictureRead=0
     PicturesNotRead=[]
     n=len(labels)
     start_time = time.time()
-    for i in range(1,n):
-        pathEachPicture='../../../Photos/Aircond/AC ('+str(i)+').jpg'
+    for i in range(n):
+        pathEachPicture='../../../Photos/Aircond/AC ('+str(i+1)+').jpg'
         #Testing the model on all pictures
-        if model(pathEachPicture)==labels[i-1]:
+        if model(pathEachPicture)==labels[i]:
             sumPictureRead=sumPictureRead+1
         else:
-            PicturesNotRead.append(i)
+            PicturesNotRead.append(i+1)
 
         #Progression of the testing
-        purcentage=str(int((i/n) *100))+"%"
-        print_progress(i, n, prefix='Progress:', suffix=purcentage)
+        purcentage=str(int((i+1/n) *100))+"%"
+        print_progress(i+1, n, prefix='Progress:', suffix=purcentage)
 
     end_time = time.time()
     #Time elapsed
     execution_time = end_time - start_time
+    print()
     print(f"Execution time: {execution_time} seconds")
 
     #Number of pictures read correctly
@@ -94,7 +93,11 @@ def testModel(model):
     #Display the pictures the model did not manage to read
     displayPictureNotRead(PicturesNotRead)
 
-testModel(model2_f)
+#TEST MODEL 2
+#testModel(model2_f)
+
+#TEST MODEL WITH UPDGRADED CROP
+testModel(model3_f)
 
 
 

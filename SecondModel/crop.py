@@ -41,10 +41,10 @@ def cropImage(im):
         print("NO SCREEN DETECTED")
 
     return cropped_image
-"""
-# Charger l'image
-test = cv2.imread('../../../Photos/Aircond/AC (2).jpg')
+
+#Test
+#Load image
+test = cv2.imread('../../../Photos/Aircond/AC (10).jpg')
 
 # Appliquer la fonction de rognage de l'image
 cropImage(test)
-"""
