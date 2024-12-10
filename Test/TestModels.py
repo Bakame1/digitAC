@@ -69,7 +69,7 @@ def testModel(model):
     PicturesNotRead=[]
     n=len(labels)
     start_time = time.time()
-    for i in range(n):
+    for i in range(0,n):
         pathEachPicture='../../../Photos/Aircond/AC ('+str(i+1)+').jpg'
         #Testing the model on all pictures
         if model(pathEachPicture)==labels[i]:
@@ -78,8 +78,7 @@ def testModel(model):
             PicturesNotRead.append(i+1)
 
         #Progression of the testing
-        purcentage=str(int((i+1/n) *100))+"%"
-        print_progress(i+1, n, prefix='Progress:', suffix=purcentage)
+        print_progress(i+1, n, prefix='Progress:')
 
     end_time = time.time()
     #Time elapsed

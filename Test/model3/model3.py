@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from easyocr import easyocr
-import imutils
 
 def model3_f(image_path):
     #Load image
@@ -100,38 +99,42 @@ def readImage(OriginalImage,ProcessedImage):
 
 ###################################### CROPPING IMAGE #################################
 
+def apply_gamma_correction(image, gamma=1.0):
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
+    return cv2.LUT(image, table)
+
 def cropImage(im):
     image = im
     if image is None:
         print("Error: Image not found at the specified path.")
         return None, False
 
-    cropSucceed = False
-
-    # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    # Apply adaptive thresholding
-    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                    cv2.THRESH_BINARY_INV, 11, 2)
+    gray_gamma = apply_gamma_correction(gray, gamma=2.2)
 
 
-    # Find contours from the thresholded image
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    block_sizes = [21, 51, 81]
+    C = 2
+    largest_cropped_image = None
+    largest_width = 0
 
-    # Find the largest contour (assuming it's the screen)
-    if contours:
-        largest_contour = max(contours, key=cv2.contourArea)
-        x, y, w, h = cv2.boundingRect(largest_contour)
+    for block_size in block_sizes:
+        thresh = cv2.adaptiveThreshold(gray_gamma, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                       cv2.THRESH_BINARY_INV, block_size, C)
 
-        # Crop the image to only include the screen region
-        cropped_image = image[y:y + h, x:x + w]
+        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if contours:
+            largest_contour = max(contours, key=cv2.contourArea)
+            x, y, w, h = cv2.boundingRect(largest_contour)
+            cropped_image = image[y:y + h, x:x + w]
 
-        # Display the cropped image
+            if w > largest_width:
+                largest_width = w
+                largest_cropped_image = cropped_image
 
-
-        cropSucceed = True
-        return cropped_image, cropSucceed
+    if largest_cropped_image is not None:
+        return largest_cropped_image, True
     else:
         print("NO SCREEN DETECTED")
-        return image, cropSucceed
+        return image, False
