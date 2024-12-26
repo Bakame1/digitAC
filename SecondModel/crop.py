@@ -44,7 +44,7 @@ def cropImage(im):
 
 #Test
 #Load image
-test = cv2.imread('../../../Photos/Aircond/AC (10).jpg')
+test = cv2.imread('../../../Photos/Aircond/AC (11).jpg')
 
 # Appliquer la fonction de rognage de l'image
 cropImage(test)

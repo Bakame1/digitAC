@@ -40,7 +40,7 @@ def cropImage(im):
         if contours:
             largest_contour = max(contours, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(largest_contour)
-            cropped_image = gray_gamma[y:y + h, x:x + w]
+            cropped_image = image[y:y + h, x:x + w]
 
             if w > largest_width:
                 largest_width = w
@@ -59,7 +59,8 @@ def cropImage(im):
         plt.axis('off')
         plt.show()
         return image, False
-
-IMAGE_PATH = '../../../Photos/Aircond/AC (7).jpg'
+""""
+IMAGE_PATH = '../../../Photos/Aircond/AC (12).jpg'
 image=cv2.imread(IMAGE_PATH)
 cropped, bol = cropImage(image)
+"""
