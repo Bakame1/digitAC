@@ -3,6 +3,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 def cropImage(im):
+    """
+        Crop the image to extract the region of interest.
+
+        Parameters:
+            im (numpy.ndarray): The input image in BGR format.
+
+        Returns:
+            numpy.ndarray: The cropped image.
+        """
     image = im
     #Display the original image
     plt.imshow(image)
@@ -10,25 +19,25 @@ def cropImage(im):
     plt.axis('off')
     plt.show()
 
-    # Convertir l'image en HSV pour la segmentation de couleur
+    #HSV conversion
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    # Définir les seuils pour la couleur de l'écran (gris/vert)
-    lower_bound = np.array([30, 10, 10])   # Teinte, Saturation, Valeur minimales
-    upper_bound = np.array([90, 50, 200])  # Teinte, Saturation, Valeur maximales
+    #Define threshold colors (gray and green)
+    lower_bound = np.array([30, 10, 10])   # Tint, Saturation, minimal value
+    upper_bound = np.array([90, 50, 200])
 
-    # Créer un masque avec les seuils définis
+    #Create a mask based on thresholds
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
 
-    # Trouver les contours à partir du masque
+    #contours based on the mask
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Trouver le plus grand contour (supposé être l'écran du thermostat)
+    #Find the biggest contour
     if contours:
         largest_contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(largest_contour)
 
-        # Rogner l'image pour garder seulement la région de l'écran
+        #Cropping
         cropped_image = image[y:y+h, x:x+w]
 
         #Display the cropped image

@@ -3,6 +3,16 @@ import numpy as np
 from easyocr import easyocr
 
 def model3_f(image_path):
+    """
+        Process the image and detect the temperature.
+        Here we improved just the cropping
+
+        Parameters:
+            image_path (str): The path to the image file.
+
+        Returns:
+            str: The detected temperature.
+        """
     #Load image
     image = cv2.imread(image_path)
 
@@ -10,10 +20,9 @@ def model3_f(image_path):
     image_cropTab=cropImage(image)
     image_cropped,cropSucceed= image_cropTab[0],image_cropTab[1]
 
-    # Apply a bilateral blur to the cropped image to the details
+    #Apply a bilateral blur to the cropped image to the details
     blurred_image = cv2.bilateralFilter(image_cropped, 50, 75, 75)
 
-    # Use the blurred image for further processing
     image_processed = blurred_image
 
     txtRes="empty"
@@ -28,9 +37,9 @@ def model3_f(image_path):
         if digit_detected:
             #If we have more than 3 detected digits
             if len(txtRes) > 3:
-                #Remove the last digit if it’s a "0" usually it is a the Celsius letter
+                #Remove the last digit if it’s a "0" usually it is the Celsius letter
                 if txtRes[-1]== '0':
-                    txtRes=txtRes[0]+txtRes[1]  # Remove the last detected "0"
+                    txtRes=txtRes[0]+txtRes[1]  #Remove the last detected "0"
     
                     #Case of S instead of 5
                     if txtRes[1] == "S":
@@ -66,10 +75,10 @@ def model3_f(image_path):
                 cv2.rectangle(image_cropped, tuple(map(int, bbox[0])), tuple(map(int, bbox[2])), (0, 255, 0), 5)
                 cv2.putText(image_cropped, txtRes, tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4)
     
-        #Return the string result
+        #Return the string read
         return txtRes
     else:
-        # Return the string result
+        #Return the string read
         return txtRes
 
 
@@ -77,12 +86,22 @@ def model3_f(image_path):
 
 
 def readImage(OriginalImage,ProcessedImage):
+    """
+        Read the image and detect digits.
+
+        Parameters:
+            OriginalImage (numpy.ndarray): The original image in BGR format.
+            ProcessedImage (numpy.ndarray): The processed image.
+
+        Returns:
+            tuple: A tuple containing the text read from the image, a boolean indicating whether digits are detected, and the processed image.
+        """
     reader = easyocr.Reader(['en'], gpu=True)
     text_ = reader.readtext(ProcessedImage)
     newImage=ProcessedImage
     digit_detected = False
     for i in range (2):
-        # Flag to track if any digits are detected
+        #Flag to track if any digits are detected
         if len(text_) == 0:
             # Apply less blurr
             newImage = cv2.bilateralFilter(OriginalImage, 25, 75, 75)
@@ -100,20 +119,41 @@ def readImage(OriginalImage,ProcessedImage):
 ###################################### CROPPING IMAGE #################################
 
 def apply_gamma_correction(image, gamma=1.0):
+    """
+        Apply gamma correction to the image.
+
+        Parameters:
+            image (numpy.ndarray): The input image in BGR format.
+            gamma (float): The gamma value. Default is 1.0.
+
+        Returns:
+            numpy.ndarray: The gamma-corrected image.
+        """
     invGamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
     return cv2.LUT(image, table)
 
 def cropImage(im):
+    """
+        Crop the image to extract the region of interest.
+
+        Parameters:
+            im (numpy.ndarray): The input image in BGR format.
+
+        Returns:
+            tuple: A tuple containing the cropped image and a boolean indicating whether the cropping was successful.
+        """
     image = im
+    #Case of an incorrect path
     if image is None:
         print("Error: Image not found at the specified path.")
         return None, False
 
+    #Gray conversion + gamma correction
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray_gamma = apply_gamma_correction(gray, gamma=2.2)
 
-
+    #Adaptive thresholding tests
     block_sizes = [21, 51, 81]
     C = 2
     largest_cropped_image = None
@@ -129,6 +169,7 @@ def cropImage(im):
             x, y, w, h = cv2.boundingRect(largest_contour)
             cropped_image = image[y:y + h, x:x + w]
 
+            #Selecting the largest width between these different thresholding
             if w > largest_width:
                 largest_width = w
                 largest_cropped_image = cropped_image

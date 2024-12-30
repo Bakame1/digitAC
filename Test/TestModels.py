@@ -1,6 +1,7 @@
 import sys
 from Test.model2.model2 import model2_f
 from Test.model3.model3 import model3_f
+from Test.model4.model4 import model4_f
 
 def print_progress(iteration, total, prefix='', suffix='', decimals=1, length=50, fill='█'):
     """
@@ -53,6 +54,15 @@ labels=[
 ]
 
 def displayPictureNotRead(tabPictureNotRead):
+    """
+    Display the pictures that the model failed to read.
+
+    Parameters:
+        tabPictureNotRead (list): A list of integers representing the indices of the pictures that the model failed to read.
+
+    Returns:
+        None
+    """
     print("Here are the pictures we couldn't read: ")
     res=""
     for i in range (len(tabPictureNotRead)):
@@ -65,6 +75,18 @@ def displayPictureNotRead(tabPictureNotRead):
 import time
 
 def testModel(model):
+    """
+        Test the performance of a given model on a set of images.
+        accuracy = number of pictures read correctly / number of pictures
+        execution time = time it took to execute the model on all pictures
+        pictures not read = number of pictures that the model failed to read
+
+        Parameters:
+            model (function): The model function to be tested.
+
+        Returns:
+            None
+        """
     sumPictureRead=0
     PicturesNotRead=[]
     n=len(labels)
@@ -95,8 +117,11 @@ def testModel(model):
 #TEST MODEL 2
 #testModel(model2_f)
 
-#TEST MODEL WITH UPDGRADED CROP
-testModel(model3_f)
+#TEST MODEL 3 WITH UPDGRADED CROP
+#testModel(model3_f)
+
+#TEST MODEL 4 WITH UPDGRADED image processing
+testModel(model4_f)
 
 
 

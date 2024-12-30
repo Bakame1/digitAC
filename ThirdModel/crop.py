@@ -3,24 +3,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def apply_gamma_correction(image, gamma=1.0):
+    """
+        Apply gamma correction to the image.
+
+        Parameters:
+            image (numpy.ndarray): The input image in BGR format.
+            gamma (float): The gamma value. Default is 1.0.
+
+        Returns:
+            numpy.ndarray: The gamma-corrected image.
+        """
     invGamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
     return cv2.LUT(image, table)
 
 def cropImage(im):
+    """
+        Crop the image to extract the region of interest.
+
+        Parameters:
+            im (numpy.ndarray): The input image in BGR format.
+
+        Returns:
+            tuple: A tuple containing the cropped image and a boolean indicating whether the cropping was successful.
+        """
     image=im
+    #If incorrect path
     if image is None:
         print("Error: Image not found at the specified path.")
         return None, False
 
+    #Convert the image to grayscale + gamma correction
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray_gamma = apply_gamma_correction(gray, gamma=2.2)
 
+    #Display the gamma-corrected image
     plt.imshow(gray_gamma, cmap='gray')
     plt.title("Gamma Corrected Image")
     plt.axis('off')
     plt.show()
 
+    #Apply adaptive thresholding with different block sizes
     block_sizes = [21, 51, 81]
     C = 2
     largest_cropped_image = None
@@ -42,6 +65,7 @@ def cropImage(im):
             x, y, w, h = cv2.boundingRect(largest_contour)
             cropped_image = gray_gamma[y:y + h, x:x + w]
 
+            #Select the largest width between these different thresholding
             if w > largest_width:
                 largest_width = w
                 largest_cropped_image = cropped_image

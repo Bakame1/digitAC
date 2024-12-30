@@ -3,13 +3,15 @@ import matplotlib.pyplot as plt
 from readImage import readImage
 from crop import cropImage
 
+#Here we divided the cropping and the reading part
+
 #Load image
 image = cv2.imread('../../../Photos/Aircond/AC (5).jpg')
 
 #Pre-process the image
 image_cropped= cropImage(image)
 
-# Apply a bilateral blur to the cropped image to the details
+#Apply a bilateral blur to the cropped image to the details
 blurred_image = cv2.bilateralFilter(image_cropped, 50, 75, 75)
 
 plt.title("Blurred Image")
@@ -17,7 +19,6 @@ plt.imshow(blurred_image)
 plt.axis("off")
 plt.show()
 
-# Use the blurred image for further processing
 image_processed = blurred_image
 
 
@@ -29,7 +30,7 @@ if digit_detected :
 if digit_detected :
     #If we have more than 3 detected digits
     if len(txtCopy) > 3:
-        #Remove the last digit if it’s a "0" usually it is a the Celsius letter
+        #Remove the last digit if it’s a "0" usually it is the Celsius letter
         if txtCopy[-1]== '0':
             txtCopy=txtCopy[0]+txtCopy[1]  # Remove the last detected "0"
             print(txtCopy)
@@ -57,7 +58,7 @@ if digit_detected :
 
 
     else:
-        # Case of S instead of 5
+        #Case of S instead of 5
         if txtCopy[1] == "S":
             txtCopy = txtCopy[0] + "5"
             print(txtCopy)

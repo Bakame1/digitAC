@@ -3,6 +3,16 @@ import numpy as np
 from easyocr import easyocr
 
 def model2_f(image_path):
+    """
+        Process the image and detect the temperature.
+        Here we divided the cropping and the reading part
+
+        Parameters:
+            image_path (str): The path to the image file.
+
+        Returns:
+            str: The detected temperature.
+        """
     #Load image
     image = cv2.imread(image_path)
 
@@ -12,7 +22,6 @@ def model2_f(image_path):
     # Apply a bilateral blur to the cropped image to the details
     blurred_image = cv2.bilateralFilter(image_cropped, 50, 75, 75)
 
-    # Use the blurred image for further processing
     image_processed = blurred_image
 
 
@@ -27,9 +36,9 @@ def model2_f(image_path):
     if digit_detected :
         #If we have more than 3 detected digits
         if len(txtCopy) > 3:
-            #Remove the last digit if it’s a "0" usually it is a the Celsius letter
+            #Remove the last digit if it’s a "0" usually it is the Celsius letter
             if txtCopy[-1]== '0':
-                txtCopy=txtCopy[0]+txtCopy[1]  # Remove the last detected "0"
+                txtCopy=txtCopy[0]+txtCopy[1]  #Remove the last detected "0"
 
                 #Case of S instead of 5
                 if txtCopy[1] == "S":
@@ -56,7 +65,7 @@ def model2_f(image_path):
 
         else:
             if len(txtCopy)==2:
-                # Case of S instead of 5
+                #Case of S instead of 5
                 if txtCopy[1] == "S":
                     txtCopy = txtCopy[0] + "5"
 
@@ -72,14 +81,24 @@ def model2_f(image_path):
 
 
 def readImage(OriginalImage,ProcessedImage):
+    """
+        Read the image and detect digits.
+
+        Parameters:
+            OriginalImage (numpy.ndarray): The original image in BGR format.
+            ProcessedImage (numpy.ndarray): The processed image.
+
+        Returns:
+            tuple: A tuple containing the text read from the image, a boolean indicating whether digits are detected, and the processed image.
+        """
     reader = easyocr.Reader(['en'], gpu=True)
     text_ = reader.readtext(ProcessedImage)
     newImage=ProcessedImage
     digit_detected = False
     for i in range (2):
-        # Flag to track if any digits are detected
+        #Flag to track if any digits are detected
         if len(text_) == 0:
-            # Apply less blurr
+            #Apply less blurr
             newImage = cv2.bilateralFilter(OriginalImage, 25, 75, 75)
 
             #Read the new image
@@ -96,28 +115,37 @@ def readImage(OriginalImage,ProcessedImage):
 
 
 def cropImage(im):
+    """
+        Crop the image to extract the region of interest.
+
+        Parameters:
+            im (numpy.ndarray): The input image in BGR format.
+
+        Returns:
+            numpy.ndarray: The cropped image.
+        """
     image = im
     cropped_image=im
 
-    # Convertir l'image en HSV pour la segmentation de couleur
+    #HSV conversion
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    # Définir les seuils pour la couleur de l'écran (gris/vert)
+    #Define threshold colors (gray and green)
     lower_bound = np.array([30, 10, 10])   # Teinte, Saturation, Valeur minimales
     upper_bound = np.array([90, 50, 200])  # Teinte, Saturation, Valeur maximales
 
-    # Créer un masque avec les seuils définis
+    #Create a mask based on thresholds
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
 
-    # Trouver les contours à partir du masque
+    #contours based on the mask
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Trouver le plus grand contour (supposé être l'écran du thermostat)
+    #Find the biggest contour
     if contours:
         largest_contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(largest_contour)
 
-        # Rogner l'image pour garder seulement la région de l'écran
+        #Cropping
         cropped_image = image[y:y+h, x:x+w]
 
     else:

@@ -1,4 +1,3 @@
-from operator import truediv
 import imutils
 from imutils.perspective import four_point_transform
 import cv2
@@ -40,17 +39,17 @@ for c in cnts:
 ##################################Extract the display##############################
 image_cropped = four_point_transform(image, displayCnt.reshape(4, 2))
 
-# Initialize EasyOCR reader
+#Initialize EasyOCR reader
 reader = easyocr.Reader(['en'], gpu=True)
 text_ = reader.readtext(image_cropped)
 
-# Set the confidence threshold lower to detect more potential digits
+#Set the confidence threshold lower to detect more potential digits
 threshold = 0.15
 
-# Regular expression pattern for digits only
+#Regular expression pattern for digits only
 pattern = re.compile(r'^\d+$')
 
-# Flag to track if any digits are detected
+#Flag to track if any digits are detected
 digit_detected = False
 
 

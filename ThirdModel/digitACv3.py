@@ -3,23 +3,23 @@ import matplotlib.pyplot as plt
 from readImage import readImage
 from crop import cropImage
 
-# Load image
+#Here we improved just the cropping
+#Load image
 image = cv2.imread('../../../Photos/Aircond/AC (26).jpg')
 
-# Pre-process the image
+#Pre-process the image
 image_cropTab = cropImage(image)
 image_cropped, cropSucceed = image_cropTab[0], image_cropTab[1]
 
-# Apply a bilateral blur to the cropped image to the details
+#Apply a bilateral blur to the cropped image to the details
 blurred_image = cv2.bilateralFilter(image_cropped, 50, 75, 75)
 
-# Display the image with detected digits highlighted
+#Display
 plt.imshow(cv2.cvtColor(blurred_image, cv2.COLOR_BGR2RGB))
 plt.title("Blurred Image")
 plt.axis("off")
 plt.show()
 
-# Use the blurred image for further processing
 image_processed = blurred_image
 
 txtRes = "empty"
@@ -63,7 +63,7 @@ if cropSucceed:
 
         else:
             if len(txtRes) == 2:
-                # Case of S instead of 5
+                #Case of S instead of 5
                 if txtRes[1] == "S":
                     txtRes = txtRes[0] + "5"
 
@@ -73,7 +73,7 @@ if cropSucceed:
             cv2.putText(image_cropped, txtRes, tuple(map(int, bbox[0])), cv2.FONT_HERSHEY_COMPLEX, 4, (255, 0, 0), 4)
 
 
-        # Display the image with detected digits highlighted
+        #Display the image with detected digits highlighted
         plt.imshow(cv2.cvtColor(image_cropped, cv2.COLOR_BGR2RGB))
         plt.title("Digits found")
         plt.axis("off")
